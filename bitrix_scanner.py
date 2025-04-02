@@ -59,7 +59,7 @@ def parse_check_bitrix_output(output):
                 if path:
                     components.append(path)
 
-        # Simple detection of likely vulnerability indicators
+        
         if "potential vulnerability" in line.lower():
             vulnerabilities.append(line.strip())
 

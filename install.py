@@ -26,6 +26,39 @@ def install_pip_packages():
     packages = ["requests", "colorama", "droopescan", "beautifulsoup4", "packaging"]
     run_command([sys.executable, "-m", "pip", "install", "--break-system-packages"] + packages)
 
+def install_cvemap():
+    clone_dir = "cvemap"
+    repo_url = "https://github.com/projectdiscovery/cvemap.git"
+    go_bin_path = os.path.expanduser("~/go/bin/cvemap")
+
+    if not os.path.exists(clone_dir):
+        print("[INFO] Cloning CVEMap repository...")
+        run_command(["git", "clone", repo_url, clone_dir])
+    else:
+        print("[INFO] CVEMap repository already exists.")
+
+    print("[INFO] Installing CVEMap via go install...")
+    run_command(["go", "install", "github.com/projectdiscovery/cvemap/cmd/cvemap@latest"])
+
+    if not os.path.isfile(go_bin_path):
+        print("[ERROR] CVEMap binary not found after go install.")
+        sys.exit(1)
+
+    print("\n[INFO] CVEMap installation complete.")
+    print("[ACTION REQUIRED] To use CVEMap, you must register for a free API key at:")
+    print("  https://cloud.projectdiscovery.io/\n")
+
+    input("[Press ENTER to continue and authorize with your API key]")
+
+    print("[INFO] Launching CVEMap authorization prompt...")
+    try:
+        subprocess.run([go_bin_path, "-auth"], check=True)
+    except subprocess.CalledProcessError:
+        print("[ERROR] CVEMap authorization failed. Please try manually: ~/go/bin/cvemap -auth")
+        sys.exit(1)
+
+    print(f"[SUCCESS] CVEMap is now authorized and ready to use.")
+
 def install_wpscan():
     print("\n[==] Installing WPScan...\n")
     if shutil.which("wpscan") is None:
@@ -64,6 +97,7 @@ def main():
     install_searchsploit()
     clone_cmseek()
     clone_check_bitrix()
+    install_cvemap()
 
     print("\n[OK] All required tools and libraries have been successfully installed.\n")
 

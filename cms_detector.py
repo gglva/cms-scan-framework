@@ -21,7 +21,7 @@ def detect_cms(url):
             logger.error(f"CMSeeK execution failed: {result.stderr}")
             return fallback_with_whatweb(url)
 
-        # CMSeeK saves JSON output in CMSeeK/Result/<IP>/cms.json
+        
         ip = url.split("//")[-1].split("/")[0]
         cms_result_path = os.path.join("CMSeeK", "Result", ip, "cms.json")
 
